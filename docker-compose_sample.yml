@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik # The official Traefik docker image
+    command: --api --docker # Enables the web UI and tells Træfik to listen to docker
+    restart: always
+    ports:
+      - "80:80"     # The HTTP port
+      - "443:443"   # The SSL port
+      - "8080:8080" # The Web UI (enabled by --api)
+    networks:
+      - proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+      - /opt/t5/traefik.toml:/traefik.toml
+      - /opt/t5/acme.json:/acme.json
+    labels:                                                    
+      - "traefik.frontend.rule=Host:monitor.sendthebricks.com"
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.frontend.auth.basic=hello:$$apr1$$0fG.Ae34$$Df4AI7ZhJojf.VjEYIFoT/"
+    container_name: traefik # Do not use container_name for containers you want to scale                                   
+  whoami:
+    image: emilevauge/whoami # A container that exposes an API to show its IP address
+    labels:
+      - "traefik.frontend.rule=Host:blog.sendthebricks.com"
+      - "traefik.enable=true"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+
