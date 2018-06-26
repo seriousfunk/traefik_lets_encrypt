@@ -19,7 +19,7 @@ services:
       - "traefik.frontend.rule=Host:monitor.sendthebricks.com"
       - "traefik.enable=true"
       - "traefik.port=8080"
-      - "traefik.frontend.auth.basic=your-username:$$apr1$$your-md5-hashed-password/"
+      - "traefik.frontend.auth.basic=your-username:$$apr1$$your-md5-hashed-password/" #esacape $ with a second $
     container_name: traefik # Do not use container_name for containers you want to scale                                   
   whoami:
     image: emilevauge/whoami # A container that exposes an API to show its IP address
